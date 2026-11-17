@@ -1,5 +1,5 @@
 name: Build firmware
-run-name: ${{ inputs.validate_only && 'Validate firmware' || 'Build firmware' }} / ${{ inputs.profile || 'all' }}
+run-name: ${{ inputs.validate_only && 'Validate firmware' || 'Build firmware' }} / ${{ inputs.profile || '7dr7299-mtk' }}
 
 on:
   workflow_dispatch:
@@ -7,8 +7,8 @@ on:
       profile:
         description: 编译机型
         type: choice
-        default: all
-        options: [all, xiaomi-be6500, tenda-be12-pro, s20p-mt76, s20p-mtk, jdcloud-re-cs-06, x86-64, 7dr7299-mt76, 7dr7299-mtk]
+        default: 7dr7299-mtk
+        options: [7dr7299-mtk, all, xiaomi-be6500, tenda-be12-pro, s20p-mt76, s20p-mtk, jdcloud-re-cs-06, x86-64, 7dr7299-mt76]
       source_commit:
         description: 可选上游完整提交 SHA（仅单机型）
         type: string
@@ -54,7 +54,7 @@ jobs:
         id: plan
         env:
           GH_TOKEN: ${{ github.token }}
-          PROFILE: ${{ inputs.profile || 'all' }}
+          PROFILE: ${{ inputs.profile || '7dr7299-mtk' }}
           SOURCE_COMMIT: ${{ inputs.source_commit }}
           FORCE: ${{ inputs.force }}
           EVENT_NAME: ${{ github.event_name }}
@@ -325,7 +325,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_RUN_ID: ${{ github.run_id }}
-          PROFILE: ${{ inputs.profile || 'all' }}
+          PROFILE: ${{ inputs.profile || '7dr7299-mtk' }}
         run: python3 Scripts/release.py plan
   publish:
     name: ${{ matrix.profile }} / publish
