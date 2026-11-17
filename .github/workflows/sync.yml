@@ -1,0 +1,35 @@
+name: Upstream Sync
+
+on:
+  schedule:
+    # 每天北京时间 01:40（UTC 17:40）拉取更新
+    - cron: '40 17 * * *'
+  workflow_dispatch: # 支持网页手动点击运行
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync and Merge Upstream
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git remote add upstream https://github.com/WoChen5770/openwrt_build.git || true
+          git fetch upstream main
+
+          # 合并冲突时优先保留本地的 PRIVATE.txt 和 firmware-defaults.toml
+          git merge upstream/main -X ours -m "chore: sync upstream changes" || {
+            echo "Auto merge failed"
+            exit 1
+          }
+
+          git push origin main
