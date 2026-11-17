@@ -1,9 +1,9 @@
-# --- 禁用 daed 透明代理 ---
+# 禁用 daed
 CONFIG_PACKAGE_daed=n
 CONFIG_PACKAGE_luci-app-daede=n
-CONFIG_PACKAGE_luci-app-daede_daed=n
+CONFIG_DAED_USE_KERNEL_BTF=n
 
-# --- 禁用 honk 代理核心 ---
+# 禁用 honk
 CONFIG_PACKAGE_honk=n
 CONFIG_PACKAGE_luci-app-honk=n
 CONFIG_PACKAGE_luci-i18n-honk-zh-cn=n
