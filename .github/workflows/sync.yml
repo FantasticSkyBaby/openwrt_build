@@ -1,0 +1,54 @@
+name: Upstream Sync
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync_latest_from_upstream:
+    name: Sync latest commits from upstream
+    runs-on: ubuntu-latest
+    if: ${{ github.event.repository.fork }}
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Fetch upstream changes
+        id: sync
+        run: |
+          git remote add upstream https://github.com/WoChen5770/openwrt_build.git
+          git fetch upstream main
+          
+          LOCAL_COMMIT=$(git rev-parse HEAD)
+          UPSTREAM_COMMIT=$(git rev-parse upstream/main)
+          
+          if [ "$LOCAL_COMMIT" != "$UPSTREAM_COMMIT" ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            git merge upstream/main -m "sync: auto-sync updates from upstream"
+            git push origin main
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+            echo "Already up-to-date."
+          fi
+
+      - name: Trigger Build Workflow
+        if: steps.sync.outputs.has_updates == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "检测到上游更新，触发 7DR7299-MTK 编译..."
+          gh workflow run build.yml --repo "${{ github.repository }}" -f profile=7dr7299-mtk
