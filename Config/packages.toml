@@ -73,3 +73,11 @@ repository = "https://github.com/189160/luci-app-honk.git"
 branch = "main"
 profiles = ["s20p-mt76", "jdcloud-re-cs-06", "s20p-mtk", "x86-64", "7dr7299-mt76", "7dr7299-mtk"]
 mode = "honk"
+
+# Lucky (端口转发 / 反代 / DDNS)
+[lucky]
+repository = "https://github.com/gdy666/luci-app-lucky.git"
+branch = "main"
+profiles = ["7dr7299-mtk"]
+mode = "nested"
+directories = ["lucky", "luci-app-lucky"]
