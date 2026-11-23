@@ -1,0 +1,13 @@
+# 禁用 daed
+CONFIG_PACKAGE_daed=n
+CONFIG_PACKAGE_luci-app-daede=n
+CONFIG_DAED_USE_KERNEL_BTF=n
+
+# 禁用 honk
+CONFIG_PACKAGE_honk=n
+CONFIG_PACKAGE_luci-app-honk=n
+CONFIG_PACKAGE_luci-i18n-honk-zh-cn=n
+
+# 启用 lucky
+CONFIG_PACKAGE_lucky=y
+CONFIG_PACKAGE_luci-app-lucky=y
