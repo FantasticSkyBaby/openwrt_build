@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# 仅针对 7dr7299-mtk（旧版 ucode-mod-fs 缺失 mkdtemp）修补
-[ "${WRT_PROFILE:-}" = "7dr7299-mtk" ] || exit 0
+echo "[PRIVATE.sh] profile=${WRT_PROFILE:-unknown}, pwd=$(pwd)"
 
 python3 - <<'PY'
 import glob
