@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "[PRIVATE.sh] profile=${WRT_PROFILE:-unknown}, pwd=$(pwd)"
+echo "[PRIVATE.sh] profile=${WRT_PROFILE:-unknown}, pwd=$(pwd)" >&2
 
 python3 - <<'PY'
 import glob
 import re
+import sys
 from pathlib import Path
 
 targets = (
@@ -14,7 +15,7 @@ targets = (
 )
 
 if not targets:
-    print("[PRIVATE.sh] 未找到 luci.adguardhome，跳过修补")
+    print("[PRIVATE.sh] 未找到 luci.adguardhome，跳过修补", file=sys.stderr, flush=True)
     raise SystemExit(0)
 
 helper = """
@@ -37,7 +38,7 @@ for path_str in sorted(set(targets)):
     content = p.read_text(encoding="utf-8")
 
     if "function mkdtemp(" in content:
-        print(f"[PRIVATE.sh] 已包含 mkdtemp 兼容实现，跳过: {p}")
+        print(f"[PRIVATE.sh] 已包含 mkdtemp 兼容实现，跳过: {p}", file=sys.stderr, flush=True)
         continue
 
     def repl(match):
@@ -52,7 +53,7 @@ for path_str in sorted(set(targets)):
     new_content, _ = pattern.subn(repl, content, count=1)
     if new_content != content:
         p.write_text(new_content, encoding="utf-8")
-        print(f"[PRIVATE.sh] 已修补 {p}")
+        print(f"[PRIVATE.sh] 已修补 {p}", file=sys.stderr, flush=True)
     else:
-        print(f"[PRIVATE.sh] {p} 无需修补")
+        print(f"[PRIVATE.sh] {p} 无需修补", file=sys.stderr, flush=True)
 PY
